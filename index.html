@@ -275,11 +275,22 @@ h1,h2,h3{ font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacin
 @media (max-width:900px){ .icon-grid{ grid-template-columns:repeat(3,1fr); } }
 .icon-card{
   border:1px solid var(--line); background:var(--bg-panel); border-radius:12px;
-  padding:18px 10px; text-align:center; transition:transform 0.25s ease, border-color 0.25s ease;
+  padding:18px 10px; text-align:center; transition:transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  cursor:pointer;
 }
 .icon-card:hover{ transform:translateY(-4px); border-color:var(--cyan-dim); }
+.icon-card.active{ background:var(--bg-panel-2); border-color:var(--cyan); box-shadow:0 0 0 1px var(--cyan) inset; }
 .icon-card svg{ width:26px; height:26px; stroke:var(--cyan); margin-bottom:10px; }
 .icon-card .lbl{ font-size:11.5px; color:var(--text-mid); font-family:'JetBrains Mono',monospace; letter-spacing:0.03em; }
+.icon-card.active .lbl{ color:var(--text-hi); }
+.soc-detail{
+  margin-top:22px; padding:20px 24px; background:var(--bg-panel); border:1px solid var(--line);
+  border-radius:12px; min-height:96px; max-width:820px;
+}
+.soc-detail-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:8px; flex-wrap:wrap; }
+.soc-detail-name{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:var(--text-hi); }
+.soc-detail-code{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--cyan); letter-spacing:0.05em; }
+.soc-detail p{ font-size:14.5px; color:var(--text-mid); line-height:1.65; max-width:100%; }
 
 /* photo slides */
 .photo-frame{
@@ -301,6 +312,16 @@ h1,h2,h3{ font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacin
 .closing .lines a:hover{ color:var(--cyan); border-color:var(--cyan); }
 
 ::selection{ background:var(--cyan); color:#03222a; }
+
+/* empty placeholder slides */
+.empty-state{
+  margin-top:30px; border:1px dashed var(--line); border-radius:16px;
+  padding:70px 40px; display:flex; flex-direction:column; align-items:flex-start;
+  gap:10px; max-width:640px;
+}
+.empty-state svg{ width:30px; height:30px; stroke:var(--text-dim); margin-bottom:6px; }
+.empty-label{ font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-dim); letter-spacing:0.06em; }
+.empty-sub{ font-size:13.5px; color:var(--text-dim); opacity:0.7; }
 </style>
 </head>
 <body>
@@ -464,13 +485,20 @@ h1,h2,h3{ font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacin
     <div class="slide-inner">
       <div class="eyebrow">07 · Societies &amp; Affinity Groups</div>
       <h2>One institute,<br>many specializations.</h2>
-      <p style="max-width:680px">IEEE is made up of many specialized societies and councils, each focused on a specific area of technology — allowing in-depth knowledge sharing and collaboration within specific fields.</p>
-      <div class="icon-grid">
-        <div class="icon-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M9 9h6v6H9z"/></svg><div class="lbl">COMPUTING</div></div>
-        <div class="icon-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg><div class="lbl">POWER &amp; ENERGY</div></div>
-        <div class="icon-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 12h4l2-6 4 12 2-6h4"/></svg><div class="lbl">SIGNAL &amp; COMMS</div></div>
-        <div class="icon-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="5" y="7" width="14" height="10" rx="2"/><path d="M9 3v4M15 3v4M9 21v-4M15 21v-4"/></svg><div class="lbl">ROBOTICS</div></div>
-        <div class="icon-card"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 3a4 4 0 0 1 4 4v3a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4z"/><path d="M6 12v1a6 6 0 0 0 12 0v-1M12 19v2"/></svg><div class="lbl">BIOMEDICAL</div></div>
+      <p style="max-width:680px">IEEE is organized into more than 39 societies and technical councils, each focused on a specific area of technology — allowing in-depth knowledge sharing and collaboration within specific fields. Tap a field to learn more.</p>
+      <div class="icon-grid" id="socGrid">
+        <div class="icon-card active" data-key="computing" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M9 9h6v6H9z"/></svg><div class="lbl">COMPUTING</div></div>
+        <div class="icon-card" data-key="power" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg><div class="lbl">POWER &amp; ENERGY</div></div>
+        <div class="icon-card" data-key="signal" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 12h4l2-6 4 12 2-6h4"/></svg><div class="lbl">SIGNAL &amp; COMMS</div></div>
+        <div class="icon-card" data-key="robotics" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="5" y="7" width="14" height="10" rx="2"/><path d="M9 3v4M15 3v4M9 21v-4M15 21v-4"/></svg><div class="lbl">ROBOTICS</div></div>
+        <div class="icon-card" data-key="biomedical" tabindex="0"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 3a4 4 0 0 1 4 4v3a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4z"/><path d="M6 12v1a6 6 0 0 0 12 0v-1M12 19v2"/></svg><div class="lbl">BIOMEDICAL</div></div>
+      </div>
+      <div class="soc-detail" id="socDetail">
+        <div class="soc-detail-head">
+          <span class="soc-detail-name" id="socName">IEEE Computer Society</span>
+          <span class="soc-detail-code" id="socCode">est. 1946</span>
+        </div>
+        <p id="socText">The world's largest professional organization devoted to computer science, and the voice of software engineering within IEEE — serving a global community of tech leaders with publications, standards, and career resources.</p>
       </div>
     </div>
   </section>
@@ -523,7 +551,33 @@ h1,h2,h3{ font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacin
     </div>
   </section>
 
-  <!-- 13 CLOSING -->
+  <!-- 13 QUIZ (placeholder) -->
+  <section class="slide" data-title="Quiz">
+    <div class="slide-inner">
+      <div class="eyebrow">12 · Quiz</div>
+      <h2>Quiz.</h2>
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"/><path d="M12 17h.01" stroke-linecap="round" stroke-width="2.4"/><circle cx="12" cy="12" r="9"/></svg>
+        <div class="empty-label">This slide is intentionally left blank</div>
+        <div class="empty-sub">Drop quiz questions in here later.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 GAMES (placeholder) -->
+  <section class="slide" data-title="Games">
+    <div class="slide-inner">
+      <div class="eyebrow">13 · Games</div>
+      <h2>Games.</h2>
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="3" y="8" width="18" height="9" rx="3"/><path d="M7 12.5h3M8.5 11v3M15 12h.01M17.5 13.5h.01"/></svg>
+        <div class="empty-label">This slide is intentionally left blank</div>
+        <div class="empty-sub">Drop an activity or mini-game in here later.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 CLOSING -->
   <section class="slide closing" data-title="Join Us">
     <div class="slide-inner">
       <div class="eyebrow">Advancing Technology for Humanity</div>
@@ -621,6 +675,48 @@ function toggleAcc(headEl){
   item.parentElement.querySelectorAll('.acc-item').forEach(i=>i.classList.remove('open'));
   if(!isOpen) item.classList.add('open');
 }
+
+const socData = {
+  computing: {
+    name: 'IEEE Computer Society',
+    code: 'est. 1946 · 60,000+ members',
+    text: "The world's largest professional organization devoted to computer science, and the voice of software engineering within IEEE. It's the hub for AI, cybersecurity, cloud, and software conferences and journals — and the standards body behind things like IEEE 754 floating-point math and the 802 networking family."
+  },
+  power: {
+    name: 'IEEE Power & Energy Society (PES)',
+    code: 'PES',
+    text: "Covers the planning, research, design, and operation of the systems that generate, transmit, distribute, and control electric energy — from national grids to renewable integration. PES runs the annual PES General Meeting and sets standards used by utilities worldwide."
+  },
+  signal: {
+    name: 'IEEE Signal Processing & Communications Societies',
+    code: 'SPS · ComSoc',
+    text: "The Signal Processing Society advances the science of extracting information from audio, image, and sensor data — the math behind speech recognition, image compression, and radar. The Communications Society (ComSoc) covers how that data actually moves, from Wi-Fi to fiber-optic backbones."
+  },
+  robotics: {
+    name: 'IEEE Robotics & Automation Society (RAS)',
+    code: 'RAS',
+    text: "Advances the theory, practice, and application of robotics and automation — from industrial arms and autonomous vehicles to humanoid and medical robots. RAS sponsors ICRA and IROS, two of the largest robotics conferences in the world."
+  },
+  biomedical: {
+    name: 'IEEE Engineering in Medicine & Biology Society (EMBS)',
+    code: 'EMBS',
+    text: "Advances medicine and biology through the application of engineering science and technology — spanning medical imaging, wearable health sensors, prosthetics, and bioinformatics. It's IEEE's largest society focused entirely on healthcare technology."
+  }
+};
+document.querySelectorAll('.icon-card').forEach(card=>{
+  const activate = ()=>{
+    document.querySelectorAll('.icon-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    const d = socData[card.dataset.key];
+    if(d){
+      document.getElementById('socName').textContent = d.name;
+      document.getElementById('socCode').textContent = d.code;
+      document.getElementById('socText').textContent = d.text;
+    }
+  };
+  card.addEventListener('click', activate);
+  card.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); activate(); } });
+});
 
 const dipData = {
   wifi: `<b>IEEE 802.11 — Wi-Fi.</b> Every time you connect to wireless internet, you're using this standard. It defines how devices talk to each other over radio waves without a single cable in sight.`,
